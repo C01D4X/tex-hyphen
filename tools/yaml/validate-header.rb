@@ -171,6 +171,7 @@ class HeaderValidator
       end
     end
 
+    puts "\nReport on #{arg}:"
     if @errors.inject(0) { |errs, klass| errs + klass.last.count } > 0
       puts "There were the following errors with some files:"
       summary = []
@@ -184,6 +185,8 @@ class HeaderValidator
       end
 
       puts summary.join "\n"
+    else
+      puts "No errors were found."
     end
   end
 end
