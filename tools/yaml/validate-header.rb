@@ -93,6 +93,10 @@ class HeaderValidator
           },
         },
       },
+    },
+    source: {
+      mandatory: false,
+      type: String
     }
   }
 
