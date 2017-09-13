@@ -117,7 +117,7 @@ class HeaderValidator
       header += line
     end
 
-    puts header
+    puts header unless @mode == 'mojca'
     begin
       @metadata = YAML::load(header)
     rescue Psych::SyntaxError => err
@@ -148,7 +148,7 @@ class HeaderValidator
     parse(pattfile)
     check_mandatory(@metadata, @@format)
     validate(@metadata, @@format)
-    puts @metadata.inspect
+    puts @metadata.inspect unless @mode == 'mojca'
     @metadata['title']
   end
 
@@ -162,6 +162,13 @@ class HeaderValidator
   end
 
   def main(args)
+    @mode = 'default'
+    arg = args.shift
+    if arg == '-m' # Mojca mode
+      @mode = 'mojca'
+    else
+      args = [arg] + args
+    end
     @titles = []
     while !args.empty?
       arg = args.shift
@@ -173,13 +180,13 @@ class HeaderValidator
           @titles << [filename, runfile(File.join(arg, filename))]
         end
       else
-        puts "Argument #{arg} is neither an existing file nor an existing directory; proceeding."
+        puts "Argument #{arg} is neither an existing file nor an existing directory; proceeding." unless @mode == 'mojca'
       end
     end
 
-    puts "\nReport on #{arg}:"
+    puts "\nReport on #{arg}:" unless @mode == 'mojca'
     if @errors.inject(0) { |errs, klass| errs + klass.last.count } > 0
-      puts "There were the following errors with some files:"
+      puts "There were the following errors with some files:" unless @mode == 'mojca'
       summary = []
       @errors.each do |klass, files|
         next if files.count == 0
@@ -190,13 +197,14 @@ class HeaderValidator
         end
       end
 
-      puts summary.join "\n"
+      puts summary.join "\n" unless @mode == 'mojca'
     else
-      puts "No errors were found."
+      puts "No errors were found." unless @mode == 'mojca'
     end
 
-    puts "\nTitles"
-    puts @titles.map { |title| "#{title.first}: #{title.last}" }.join("\n")
+    if @mode == 'mojca'
+      puts @titles.map { |title| "#{title.first}: #{title.last}" }.join("\n")
+    end
   end
 end
 
