@@ -184,25 +184,25 @@ class HeaderValidator
       end
     end
 
-    puts "\nReport on #{arg}:" unless @mode == 'mojca'
-    if @errors.inject(0) { |errs, klass| errs + klass.last.count } > 0
-      puts "There were the following errors with some files:" unless @mode == 'mojca'
-      summary = []
-      @errors.each do |klass, files|
-        next if files.count == 0
-        files.each do |file|
-          filename = file.first
-          message = file.last
-          summary << "#{filename}: #{klass.name} #{message}"
+    unless @mode == 'mojca'
+      puts "\nReport on #{arg}:"
+      if @errors.inject(0) { |errs, klass| errs + klass.last.count } > 0
+        puts "There were the following errors with some files:"
+        summary = []
+        @errors.each do |klass, files|
+          next if files.count == 0
+          files.each do |file|
+            filename = file.first
+            message = file.last
+            summary << "#{filename}: #{klass.name} #{message}"
+          end
         end
+
+        puts summary.join "\n"
+      else
+        puts "No errors were found."
       end
-
-      puts summary.join "\n" unless @mode == 'mojca'
     else
-      puts "No errors were found." unless @mode == 'mojca'
-    end
-
-    if @mode == 'mojca'
       puts @titles.map { |title| "#{title.first}: #{title.last}" }.join("\n")
     end
   end
