@@ -149,6 +149,7 @@ class HeaderValidator
     check_mandatory(@metadata, @@format)
     validate(@metadata, @@format)
     puts @metadata.inspect
+    @metadata['title']
   end
 
   def runfile(filename)
@@ -161,6 +162,7 @@ class HeaderValidator
   end
 
   def main(args)
+    @titles = []
     while !args.empty?
       arg = args.shift
       if File.file? arg
@@ -168,7 +170,7 @@ class HeaderValidator
       elsif Dir.exists? arg
         Dir.foreach(arg) do |filename|
           next if filename == '.' || filename == '..'
-          runfile(File.join(arg, filename))
+          @titles << [filename, runfile(File.join(arg, filename))]
         end
       else
         puts "Argument #{arg} is neither an existing file nor an existing directory; proceeding."
@@ -192,6 +194,9 @@ class HeaderValidator
     else
       puts "No errors were found."
     end
+
+    puts "\nTitles"
+    puts @titles.map { |title| "#{title.first}: #{title.last}" }.join("\n")
   end
 end
 
